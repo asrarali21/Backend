@@ -1,10 +1,10 @@
-import { v2 } from "cloudinary";
+import {v2 as cloudinary } from "cloudinary";
 import fs from "fs"
 
 cloudinary.config({ 
         cloud_name: process.env.COULDINARY_CLOUD_NAME,
         api_key: process.env.COULDINARY_API_KEY,
-        api_secret: COULDINARY_API_SECRET
+        api_secret: process.env.COULDINARY_API_SECRET
     });
 
 

@@ -1,5 +1,5 @@
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import {apiError} from "../utils/apiError.js"
+import {ApiError} from "../utils/apiError.js"
 import {User} from "../models/user.model.js"
 import {uploadoncloudinary} from "../utils/cloudinary.js"
 import {ApiResponse}  from "../utils/apiResponse.js"
@@ -8,7 +8,7 @@ const registerUser = asyncHandler (async (req , res) => {
   // recieve user data from frontend
   // validation like username is required or etc
   //check if user already exist 
-  //check for images , avatar image
+  //check for images , avatar image middleware
   // check uploaded on cloudinary 
   //create user object  - create entry in db
   // remove password and refresh token 
@@ -17,7 +17,7 @@ const registerUser = asyncHandler (async (req , res) => {
     console.log(req.body);
     
     if ([username , email , fullname , password ].some((itemFields)=>itemFields?.trim() === "")) {
-      throw new apiError(400 , "All field are required")
+      throw new ApiError(400 , "All field are required")
     }
      
    const existedUser =  User.findOne({
@@ -25,7 +25,7 @@ const registerUser = asyncHandler (async (req , res) => {
     })
 
     if (existedUser) {
-      throw new apiError(400 , "user already exist")
+      throw new ApiError(400 , "user already exist")
     }
     
    const avatarlocalPath = req.files?.avatar[0]?.path
@@ -33,14 +33,14 @@ const registerUser = asyncHandler (async (req , res) => {
     console.log(req.files);
     
     if (!avatarlocalPath) {
-      throw new apiError(408, "avatar is required")
+      throw new ApiError(408, "avatar is required")
     }
     
    const avatar = await uploadoncloudinary(avatarlocalPath)
    const coverimage = await uploadoncloudinary(coverImagelocalPath)
 
    if (!avatar) {
-      throw new apiError(408, "avatar is required")
+      throw new ApiError(408, "avatar is required")
    }
     
   const user = await User.create({
@@ -57,7 +57,7 @@ const registerUser = asyncHandler (async (req , res) => {
    )
 
    if (!createduser) {
-      throw new apiError(500 , "something went wrong registering user")
+      throw new ApiError(500 , "something went wrong registering user")
    }
 
 
