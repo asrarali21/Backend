@@ -109,8 +109,33 @@ const loginUser = asyncHandler (async (req , res )=>{
     if (!validPassword) {
       throw new ApiError(404 , "invalid credential")
     }
+
+    const {accessToken , refreshToken}  = await GenerateAccessAndRefreshToken(user._id)
+
+    const loggedInUser = await User.findById(user.id).select( "-password ", "-refreshToken")
+
+    //whenever we have to send cookie we have to design options
+    const options ={
+      httpOnly : true,
+      secure : true 
+    }
+
+    return res.status(200)
+    .cookie("accessToken" ,  accessToken , options)
+    .cookie("refreshToken" , refreshToken , options)
+    .json(
+      new ApiResponse(200 ,
+        {
+          user : loggedInUser , accessToken , refreshToken  
+        },
+        "user logged in successfully"
+      )
+    )
 })
 
+const logoutUser = asyncHandler ( async (req , res) =>{
+      
+})
 
 export default{
   registerUser , loginUser
