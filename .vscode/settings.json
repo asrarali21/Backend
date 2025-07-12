@@ -1,0 +1,5 @@
+{
+    "github.copilot.chat.languageContext.inline.typescript.enabled": false,
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "files.autoSave": "afterDelay"
+}
