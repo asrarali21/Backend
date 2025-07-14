@@ -90,11 +90,12 @@ const loginUser = asyncHandler (async (req , res )=>{
   //access token and refresh token
   //send cookies
     const {username , email , password} = req.body
+    console.log(req.body);
+    
 
-    if (!username || !email) {
-      throw new ApiError(400 , "enter username or email")
+  if (!username && !email) {
+        throw new ApiError(400, "username or email is required")
     }
-
 
    const user = await User.findOne({
       $or : [{username}, {email}]
@@ -112,7 +113,7 @@ const loginUser = asyncHandler (async (req , res )=>{
 
     const {accessToken , refreshToken}  = await GenerateAccessAndRefreshToken(user._id)
 
-    const loggedInUser = await User.findById(user.id).select( "-password ", "-refreshToken")
+    const loggedInUser = await User.findById(user.id).select( "-password -refreshToken")
 
     //whenever we have to send cookie we have to design options
     const options ={
