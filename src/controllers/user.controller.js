@@ -43,6 +43,7 @@ const registerUser = asyncHandler (async (req , res) => {
     if (existedUser) {
       throw new ApiError(400 , "user already exist")
     }
+    //just for streak exams sucks
     
    const avatarlocalPath = req.files?.avatar[0]?.path
    const coverImagelocalPath = req.files?.avatar[0]?.path
