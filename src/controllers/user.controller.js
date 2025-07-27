@@ -3,7 +3,7 @@ import {ApiError} from "../utils/apiError.js"
 import {User} from "../models/user.model.js"
 import {uploadoncloudinary} from "../utils/cloudinary.js"
 import {ApiResponse}  from "../utils/apiResponse.js"
-
+import jwt from "jsonwebtoken"
 
 const GenerateAccessAndRefreshToken = async (userId)=>{
    try {
@@ -43,7 +43,6 @@ const registerUser = asyncHandler (async (req , res) => {
     if (existedUser) {
       throw new ApiError(400 , "user already exist")
     }
-    //just for streak exams sucks
     
    const avatarlocalPath = req.files?.avatar[0]?.path
    const coverImagelocalPath = req.files?.avatar[0]?.path
@@ -156,8 +155,42 @@ const logoutUser = asyncHandler ( async (req , res) =>{
     .clearCookie("refreshToken", options )
     .json(new ApiResponse(200 , {}, "user logged out"))
 })
+//these is used for new refresh token after the expiration of access token and prevent from user loggin in again 
+const newrefreshaccessToken = asyncHandler (async(req , res)=>{
+     const incomingrefreshtoken = req.cookie.refreshToken || req.body.refreshToken
+
+     if (!incomingrefreshtoken) {
+      throw new ApiError(400 , "unauthorized access")
+      
+     const decodedToken =  jwt.verify(incomingrefreshtoken , process.env.REFRESH_TOKEN_SECRET)
+
+     const user =  await User.findById(decodedToken?._id)
+      
+         if (!user) {
+            throw new ApiError(401, "Invalid refresh token")
+        }
+    
+        if (incomingrefreshtoken !== user?.refreshToken) {
+            throw new ApiError(401, "Refresh token is expired or used")
+            
+        }
+
+        const {accessToken ,  newRefreshToken}  = await GenerateAccessAndRefreshToken(user._id)
+
+       const options ={
+      httpOnly : true,
+      secure : true 
+    }
+         res.status(200)
+         .cookie("accessToken" ,accessToken ,options)
+         .cookie("refreshToken" , newRefreshToken ,options)
+         .json(200 , {accessToken ,  refreshToken : newRefreshToken } , "access token refreshed")
+     
+     }
+})
+
 
 export default {
- registerUser , loginUser , logoutUser
+ registerUser , loginUser , logoutUser ,newrefreshaccessToken
 } 
  

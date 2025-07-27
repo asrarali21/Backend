@@ -26,4 +26,6 @@ router.route("/register").post(
 
     router.route("/logout").post(verifyJWT , userController.logoutUser)
 
+    router.route("/refreshToken").post(userController.newrefreshaccessToken)
+
 export {router}
