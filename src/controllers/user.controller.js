@@ -181,12 +181,30 @@ const newrefreshaccessToken = asyncHandler (async(req , res)=>{
       httpOnly : true,
       secure : true 
     }
-         res.status(200)
+        return res.status(200)
          .cookie("accessToken" ,accessToken ,options)
          .cookie("refreshToken" , newRefreshToken ,options)
          .json(200 , {accessToken ,  refreshToken : newRefreshToken } , "access token refreshed")
      
      }
+})
+
+const changeCurrentPassword = asyncHandler (async()=>{
+   const {oldpassword , newpassword} = req.body
+
+    const user = await   User.findById(req?.user.id)
+
+    const isPasswordCorrect = user.isPasswordCorrect(oldpassword)
+
+    if (!isPasswordCorrect) {
+      throw new ApiError(401 , "invalid old password")
+    }
+    user.password = newpassword
+   await user.save({validateBeforeSave:false})
+    console.log(user);
+    
+    return res.status(200)
+    .json(200 ,{} , "successfully password updated")
 })
 
 
