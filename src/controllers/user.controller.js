@@ -207,6 +207,88 @@ const changeCurrentPassword = asyncHandler (async()=>{
     .json(200 ,{} , "successfully password updated")
 })
 
+const getcurrentUser = asyncHandler (async (req , res) =>{
+     res.status(200)
+     .json(new ApiResponse(200 , {user:req.user}, "successfully fetched user"))
+})
+
+const updatedaccountDetails = asyncHandler (async (req , res)=>{
+    const {fullname , email}  =req.body
+  
+    const user = User.findByIdAndUpdate(req.user._id , 
+      {
+        $set :{
+          fullname,
+          email
+        }
+      }, 
+      {
+         new:true
+      }
+    ).select("-password")
+    return res.status(200)
+    .json(new ApiResponse(200 , {user} , "user details updated successfully"))
+})
+
+const updateAvatarImages = asyncHandler (async(req ,res)=>{
+     
+   const localavatarpath =  req?.files?.path
+
+   if (!localavatarpath ) {
+               throw new ApiError(400 , "avatar file path is missing")
+   }
+
+   const avatar =await uploadoncloudinary(localavatarpath)
+
+   if (!avatar?.url) {
+       throw new ApiError(400 , "error while uploading the  avatar")
+   }
+  const user  =await User.findByIdAndUpdate(req.user?._id , 
+      {
+        $set:{
+         avatar: avatar.url
+        }
+      },
+      {
+        new:true
+      }
+    ).select("-password")
+
+    res.status(200).json(new ApiResponse(200 , user, "avatar updated successfully"))
+
+})
+
+const updatecoverImages = asyncHandler (async(req ,res)=>{
+     
+   const localcoverimagepath =  req?.files?.path
+
+   if (!localcoverimagepath ) {
+               throw new ApiError(400 , "avatar file path is missing")
+   }
+
+   const coverimage =await uploadoncloudinary(localcoverimagepath)
+
+   if (!coverimage?.url) {
+       throw new ApiError(400 , "error while uploading the  cover image")
+   }
+  const user  =await User.findByIdAndUpdate(req.user?._id , 
+      {
+        $set:{
+         coverimage: coverimage.url
+        }
+      },
+      {
+        new:true
+      }
+    ).select("-password")
+
+    res.status(200).json(new ApiResponse(200 , user, "cover image updated successfully"))
+
+})
+
+
+
+
 
 export default {
  registerUser , loginUser , logoutUser ,newrefreshaccessToken
