@@ -291,6 +291,7 @@ const updatecoverImages = asyncHandler (async(req ,res)=>{
 
 
 export default {
- registerUser , loginUser , logoutUser ,newrefreshaccessToken
+ registerUser , loginUser , logoutUser ,newrefreshaccessToken ,changeCurrentPassword
+ ,getcurrentUser , updatedaccountDetails , updateAvatarImages , updatecoverImages
 } 
  
