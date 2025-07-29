@@ -204,7 +204,7 @@ const changeCurrentPassword = asyncHandler (async()=>{
     console.log(user);
     
     return res.status(200)
-    .json(200 ,{} , "successfully password updated")
+    .json( ApiResponse ( 200 ,{} , "successfully password updated"))
 })
 
 const getcurrentUser = asyncHandler (async (req , res) =>{
@@ -285,6 +285,8 @@ const updatecoverImages = asyncHandler (async(req ,res)=>{
     res.status(200).json(new ApiResponse(200 , user, "cover image updated successfully"))
 
 })
+
+
 
 
 
