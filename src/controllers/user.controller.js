@@ -358,9 +358,9 @@ const getUserchannelProfile = asyncHandler (async (req, res)=>{
         .json(ApiResponse(200 ,channel[0], "user channel fetched succssfully"))
 })
 
-
+//watch history aggregation pipeline 
 const userWatchHistory = asyncHandler (async()=>{
-      const user = await user.aggregate([{
+      const user = await User.aggregate([{
            $match:{
              _id : new mongoose.Types.ObjectId(req.user._id)
            },
